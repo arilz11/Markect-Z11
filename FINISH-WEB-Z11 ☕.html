@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>‎ ‎Z11 Markect - Layanan Akun VPN, AKRAB & VPS‎ ‎</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables untuk konsistensi */
+        :root {
+            --bg-dark: #1a1a2e;
+            --bg-primary: #162447;
+            --bg-secondary: #1b1b2f;
+            --accent-color: #e43f5a;
+            --accent-hover: #d33a52;
+            --text-primary: #e0e0e0;
+            --text-secondary: #f6f6f6;
+            --price-color: #17b978;
+            --glow-green: #39ff14;
+            --border-radius: 10px;
+            --spotlight-x: 50%;
+            --spotlight-y: 50%;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body.preloader-active {
+            overflow: hidden;
+        }
+
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-text {
+            font-family: 'Cinzel', serif;
+            color: transparent;
+            font-size: 4em;
+            letter-spacing: 5px;
+            position: relative;
+            overflow: hidden;
+            --flash-delay: 2s; 
+        }
+        
+        .welcome-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: letter-reveal 1s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* --- HD Text Shadow: Efek bayangan dibuat lebih halus & menyebar --- */
+            text-shadow: 
+                0 0 5px var(--glow-green),
+                0 0 10px var(--glow-green),
+                0 0 20px var(--glow-green),
+                0 0 35px var(--glow-green),
+                0 0 50px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        @keyframes letter-reveal {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .welcome-text.flash-effect::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 0;
+            width: 70%;
+            height: 120%;
+            background: linear-gradient(
+                100deg, 
+                transparent 10%, 
+                rgba(255, 255, 255, 0.95) 40%,
+                rgba(255, 255, 255, 0.7) 60%,
+                transparent 90%
+            );
+            transform: translateX(-180%) skewX(-35deg);
+            animation: flash-across 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation-delay: var(--flash-delay);
+            /* --- HD Flash: Bayangan pada efek kilat untuk kesan lebih cerah --- */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes flash-across {
+            to {
+                transform: translateX(250%) skewX(-35deg);
+            }
+        }
+        
+        /* --- PENAMBAHAN UNTUK PAUSE ANIMASI SAAT PRELOADER AKTIF --- */
+        body.animations-paused .product-item,
+        body.animations-paused .akrab-product,
+        body.animations-paused .warning-box,
+        body.animations-paused .site-title::after,
+        body.animations-paused .marquee__inner,
+        body.animations-paused .title-gradient-text {
+            animation: none !important;
+        }
+
+        body.animations-paused .animate-on-show,
+        body.animations-paused .grid-item ul:not(.product-list) li,
+        body.animations-paused .scroll-animate,
+        body.animations-paused .product-item,
+        body.animations-paused .akrab-product {
+            transition: none !important;
+        }
+
+        @keyframes animated-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-primary);
+            padding: 0;
+            line-height: 1.6;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(
+                    circle at var(--spotlight-x) var(--spotlight-y),
+                    rgba(22, 36, 71, 0.8) 0%,
+                    transparent 30%
+                ),
+                linear-gradient(-45deg, #1a1a2e, #162447, #1b1b2f, #1a1a2e);
+            background-size: 100% 100%, 400% 400%;
+            animation: animated-gradient 15s ease infinite;
+            transition: background-position 0.1s linear;
+            overflow-x: hidden;
+            /* --- HD Font Rendering: Teks lebih tajam di browser yang mendukung --- */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--bg-secondary);
+            color: var(--accent-color);
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(0px);
+        }
+        .header.scrolled {
+            background-color: rgba(27, 27, 47, 0.8);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(to right, var(--glow-green), var(--accent-color));
+            z-index: 2000;
+            transition: width 0.1s linear;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: var(--bg-primary);
+            border-radius: 15px;
+            /* --- HD Shadow: Bayangan dibuat lebih lembut & berlapis untuk efek 3D yang lebih baik --- */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3), 0 25px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        @keyframes shine-effect {
+            0% { transform: translateX(-150%) skewX(-25deg); }
+            100% { transform: translateX(250%) skewX(-25deg); }
+        }
+        .site-title {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .site-title::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            animation: shine-effect 5s infinite linear;
+        }
+        
+        .header h1 { font-size: 2.5em; }
+        .header p { margin-top: 8px; font-size: 1.1em; min-height: 1.1em; }
+        .header .subtitle { font-size: 1em; color: var(--text-primary); }
+
+        @keyframes animated-text-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .title-gradient-text {
+            background: linear-gradient(90deg, var(--glow-green), var(--accent-color), var(--glow-green));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: animated-text-gradient 4s linear infinite;
+        }
+        
+        .section {
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+        .section:last-child { border-bottom: none; }
+        
+        .section h2 {
+            display: inline-block;
+            padding: 10px 25px;
+            font-size: 2em;
+            margin-bottom: 25px;
+            background: linear-gradient(145deg, #1f213b, #1a1a2e);
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 2px 3px rgba(0,0,0,0.4);
+            border-bottom: 3px solid var(--accent-color);
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: default;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 95%;
+        }
+        
+        /* --- HD Marquee: Script akan membuat animasi scroll teks panjang lebih mulus --- */
+        @keyframes marquee-scroll {
+            to { transform: translateX(-50%); }
+        }
+
+        .long-title span {
+            display: block;
+        }
+        
+        .marquee__inner {
+            display: flex;
+            width: fit-content;
+            animation: marquee-scroll 10s linear infinite;
+        }
+        
+        .marquee__content {
+            white-space: nowrap;
+            margin-right: 50px; 
+        }
+
+        .section-header-wrapper {
+            text-align: center;
+            overflow: hidden;
+        }
+        .section h2:hover {
+            transform: scale(1.05);
+            color: var(--glow-green);
+        }
+
+        .slider-container {
+            position: relative; width: 100%; overflow: hidden;
+            background-color: var(--bg-secondary); border-radius: var(--border-radius);
+            padding-bottom: 100px;
+        }
+        .slides-wrapper { display: flex; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slide {
+            min-width: 100%; padding: 25px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 500px;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .slide.active-slide { opacity: 1; transform: scale(1); }
+        .slide > * { width: 100%; }
+
+        .slider-nav {
+            position: absolute; bottom: 20px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 15px;
+        }
+        .slider-nav button {
+            background-color: var(--accent-color); color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; cursor: pointer;
+            font-weight: bold; transition: all 0.3s ease;
+        }
+        .slider-nav button:hover { background-color: var(--accent-hover); transform: translateY(-2px); }
+        .slider-nav button:disabled { background-color: #555; cursor: not-allowed; transform: none; }
+        
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .animate-on-show {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-show.activated { opacity: 1; transform: translateY(0); }
+        
+        /* --- HD Glow: Efek glow dibuat lebih halus dan menyebar untuk tampilan premium --- */
+        @keyframes pulse-glow-bg {
+            from {
+                box-shadow: 0 0 5px rgba(57, 255, 20, 0.4), 
+                            0 0 10px rgba(57, 255, 20, 0.3),
+                            0 0 15px rgba(57, 255, 20, 0.2);
+            }
+            to {
+                box-shadow: 0 0 12px rgba(57, 255, 20, 0.8), 
+                            0 0 24px rgba(57, 255, 20, 0.6),
+                            0 0 36px rgba(57, 255, 20, 0.4);
+            }
+        }
+        
+        .product-item, .akrab-product {
+            animation: pulse-glow-bg 2.5s infinite alternate;
+            border-left: 5px solid var(--glow-green);
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            /* --- HD Transition: Transisi lebih halus + akselerasi GPU untuk animasi bebas lag --- */
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+            will-change: transform, box-shadow; /* Optimasi performa animasi */
+        }
+        .product-item:hover, .akrab-product:hover {
+            box-shadow: 0 0 16px rgba(57, 255, 20, 0.9), 0 0 28px rgba(57, 255, 20, 0.8);
+            transform: perspective(1000px) scale(1.02);
+        }
+        
+        .product-item {
+            background-color: var(--bg-primary); padding: 20px;
+            border-radius: var(--border-radius); margin-bottom: 15px;
+        }
+        .product-item:last-child { margin-bottom: 0; }
+        .price { font-weight: bold; color: var(--price-color); font-size: 1.2em; }
+        
+        .akrab-product {
+            text-align: left; padding: 20px; border-radius: var(--border-radius);
+            background-color: var(--bg-primary);
+        }
+        .akrab-product h4 { color: var(--accent-color); margin-top: 15px; margin-bottom: 10px; font-size: 1.1em; }
+        .akrab-product .details-list { list-style-type: '• 📶‎ ‎'; padding-left: 20px; }
+        .akrab-product .noted-list { list-style-type: '• 📝‎ ‎'; padding-left: 20px; }
+        .akrab-product .akrab-price {
+            margin-top: 20px; text-align: center; font-size: 1.7em; font-weight: bold; padding: 10px;
+            background-color: var(--bg-secondary); border-radius: var(--border-radius); color: var(--price-color);
+            border: 1px solid var(--price-color);
+        }
+        
+        .akrab-product .animate-on-show:nth-of-type(1) { transition-delay: 0.1s; }
+        .akrab-product .animate-on-show:nth-of-type(2) { transition-delay: 0.2s; }
+        .akrab-product .animate-on-show:nth-of-type(3) { transition-delay: 0.3s; }
+        .akrab-product .animate-on-show:nth-of-type(4) { transition-delay: 0.4s; }
+        .akrab-product .animate-on-show:nth-of-type(5) { transition-delay: 0.5s; }
+
+        .typing-cursor::after {
+            content: '▋'; display: inline-block;
+            animation: blink-caret 0.75s step-end infinite;
+            color: var(--accent-color); margin-left: 5px;
+        }
+        @keyframes blink-caret { from, to { opacity: 0; } 50% { opacity: 1; } }
+
+        .slider-dots {
+            position: absolute; bottom: 70px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 10px;
+        }
+        .dot {
+            width: 12px; height: 12px; background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%; border: none; cursor: pointer; padding: 0;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .dot.active { background-color: var(--accent-color); transform: scale(1.2); }
+        
+        .details-list { list-style-type: none; padding-left: 0; margin-top: 10px; }
+        .details-list li { margin-bottom: 5px; }
+
+        .grid-item {
+            background-color: var(--bg-primary); padding: 25px;
+            border-radius: var(--border-radius); height: 100%;
+        }
+        
+        .akrab-product h3, .grid-item h3 {
+            text-align: center;
+            font-size: 1.3em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            background-color: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        
+        .grid-item .product-list + h4 { margin-top: 25px; }
+
+        .grid-item h4 {
+            color: var(--accent-color); margin-top: 0; margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        .grid-item h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-color), var(--glow-green));
+            border-radius: 2px;
+        }
+        
+        .multi-column-list {
+            display: flex; flex-wrap: wrap; gap: 15px;
+            padding-left: 0 !important; list-style-type: none !important;
+        }
+        .multi-column-list li {
+            flex-basis: calc(50% - 8px);
+            background-color: var(--bg-secondary);
+            padding: 10px 15px; border-radius: 5px;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        /* --- HD List Animation: Animasi item list dibuat lebih dinamis --- */
+        .grid-item ul:not(.product-list) li {
+            opacity: 0; transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.2s ease-out;
+        }
+        .grid-item ul:not(.product-list) li.activated {
+             opacity: 1; transform: translateY(0);
+        }
+        .grid-item ul:not(.product-list) li:hover {
+            transform: translateY(-3px) translateX(5px) scale(1.02);
+            color: var(--glow-green);
+        }
+        .multi-column-list li:hover {
+             transform: translateY(-3px) scale(1.02);
+        }
+
+        .warning-box {
+            background-color: #331a1a;
+            border: 2px solid var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent-color);
+            animation: pulse-warning 1.5s infinite alternate;
+        }
+        /* --- HD Glow: Efek glow pada warning box juga diperhalus --- */
+        @keyframes pulse-warning {
+            from {
+                box-shadow: 0 0 5px var(--accent-color), 
+                            0 0 10px rgba(228, 63, 90, 0.3);
+            }
+            to {
+                box-shadow: 0 0 12px var(--accent-color), 
+                            0 0 24px rgba(228, 63, 90, 0.6);
+            }
+        }
+        
+        .contact-section { text-align: center; }
+        .contact-section .btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .btn {
+            display: inline-block; background-color: var(--accent-color); color: #fff;
+            padding: 12px 25px; text-decoration: none; border-radius: 5px;
+            font-weight: bold; transition: all 0.3s ease;
+            box-shadow: 0 0 5px rgba(228, 63, 90, 0);
+        }
+        .btn:hover {
+            background-color: var(--accent-hover); transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(228, 63, 90, 0.4), 0 0 20px rgba(228, 63, 90, 0.6);
+        }
+
+        .footer { text-align: center; padding: 20px; font-size: 0.9em; color: #a0a0a0; background-color: var(--bg-secondary); }
+    
+        @media (max-width: 768px) {
+            .welcome-text { font-size: 2.5em; }
+            body { 
+                padding: 0;
+                /* --- HD Mobile: Spotlight dinonaktifkan di mobile untuk performa --- */
+                background-image: linear-gradient(-45deg, #1a1a2e, #162447, #1b1b2f, #1a1a2e);
+            }
+            .container { margin: 10px auto; }
+            .header h1 { font-size: 2em; }
+            .section h2 { font-size: 1.4em; padding: 8px 15px;}
+            .slide { min-height: 540px; padding: 20px 15px; }
+            .akrab-product h3, .grid-item h3 { font-size: 1.1em; padding: 8px 10px; }
+            .akrab-product .akrab-price { font-size: 1.5em; }
+            .multi-column-list li { flex-basis: 100%; }
+        }
+    </style>
+
+    <style id="hd-enhancements">
+        /* 1. EFEK TEKSTUR GRAIN HALUS PADA BACKGROUND */
+        /* Memberikan kesan 'vintage' dan membuat background tidak terlalu flat */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABnSURBVEjH7dYxCgAgDACx8o9/xncC2GJaNdD8z8aE2uOOQ8XscFclzek2OpA9ishfDpcgvxLGfOzIfmOD4YRmHXCAWSIfMQontGMe22d26KIGjDbCRf/3wD6E2J3CNscG7IeCAIgoPSbrmgZfYEthwAAAABJRU5ErkJggg==);
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 2. PENYEMPURNAAN EFEK KACA (GLASSMORPHISM) PADA HEADER */
+        /* Menambahkan garis tepi tipis saat header di-scroll, membuatnya lebih tegas dan premium */
+        .header.scrolled {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* 3. MEMPERCERAH GLOW HIJAU PADA KARTU PRODUK */
+        /* Animasi glow dibuat sedikit lebih terang dan menyebar lebih luas */
+        @keyframes pulse-glow-bg {
+            from {
+                box-shadow: 0 0 5px rgba(57, 255, 20, 0.4), 
+                            0 0 10px rgba(57, 255, 20, 0.3);
+                border-left-color: var(--glow-green);
+            }
+            to {
+                box-shadow: 0 0 15px rgba(57, 255, 20, 0.8), 
+                            0 0 30px rgba(57, 255, 20, 0.6),
+                            0 0 45px rgba(57, 255, 20, 0.4);
+                border-left-color: #8aff78; /* Warna border lebih cerah saat glow maksimal */
+            }
+        }
+
+        /* 4. PENYEMPURNAAN JUDUL SEKSI (H2) */
+        /* Menambahkan efek glow pada teks saat di-hover, membuatnya lebih menonjol */
+        .section h2:hover {
+            text-shadow: 0 0 10px var(--glow-green);
+        }
+
+        /* 5. EFEK INTERAKTIF PADA TOMBOL (BUTTONS) */
+        /* Memberikan feedback visual saat tombol ditekan */
+        .btn:active, .slider-nav button:active {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(228, 63, 90, 0.3);
+        }
+
+        /* 6. MEMPERCERAH SCROLL PROGRESS BAR */
+        /* Menambahkan bayangan (shadow) pada progress bar agar terlihat bersinar */
+        #scroll-progress {
+            box-shadow: 0 0 10px var(--glow-green), 0 0 5px var(--accent-color);
+        }
+
+        /* 7. CUSTOM SCROLLBAR SESUAI TEMA */
+        /* Mengganti tampilan scrollbar default agar serasi dengan desain website */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+            border: 2px solid var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <h1 class="welcome-text">‎ ‎WELCOMETO‎ ‎</h1>
+    </div>
+
+    <div id="scroll-progress"></div>
+    
+    <div class="container scroll-animate">
+        <header class="header">
+            <h1 class="site-title title-gradient-text">♛‎ ‎ ‎𝐙𝟏𝟏 𝐌𝐀𝐑𝐊𝐄𝐂𝐓‎ ‎ ‎♛</h1>
+            <p id="typing-line-1" >‎ 💼‎ ‎ ‎ 𝙋𝙤𝙬𝙚𝙧 𝙐𝙥 𝙔𝙤𝙪𝙧 𝘿𝙖𝙮!!‎ ‎ ‎ 🤝</p>
+            <p id="typing-line-2" class="subtitle" >‎ ‎ 🛒‎ ‎ ‎ Fast • Reliable • Trusted‎ ‎ ‎ ‎ 🔐</p>
+        </header>
+
+        <section class="section">
+            <div class="section-header-wrapper">
+                <h2 class="long-title"><span>👨‍👩‍👧‍👦‎ ‎ ‎READY AKRAB XL - AXIS & LIVE ON‎ ‎ ‎📡</span></h2>
+            </div>
+            <div class="slider-container">
+                <div class="slides-wrapper">
+                    <div class="slide"> <div class="akrab-product"> <h3>👶‎ ‎ ‎AKRAB SUPERMINI‎ ‎ ‎👶</h3> <h4 class="animate-on-show">Details Kuota:‎ ‎ ‎🔍</h4> <ul class="details-list animate-on-show"> <li><strong>AREA 1:</strong> 13 - 15 GB</li> <li><strong>AREA 2:</strong> 15 - 17 GB</li> <li><strong>AREA 3:</strong> 20 - 22 GB</li> <li><strong>AREA 4:</strong> 30 - 32 GB</li> </ul> <h4 class="animate-on-show">➤‎ ‎NOTED:‎ ‎🗒️!!</h4> <ul class="noted-list animate-on-show"> <li>Rewards Tidak Masuk, Tunggu 1x24 Jam Baru Komplen.</li> <li>Official 100%, Resmi, Bergaransi.</li> <li>Masa Aktif Kuota Internet, 28Hari.</li> <li>CEK AREA: https://ln.run/FQLSo</li> </ul> <div class="akrab-price animate-on-show">Rp 49.000‎ ‎💰</div> </div> </div>
+                    <div class="slide"> <div class="akrab-product"> <h3>🛍‎ ‎ ‎AKRAB BIG‎ ‎ ‎🛍</h3> <h4 class="animate-on-show">Details Kuota:‎ ‎ ‎🔍</h4> <ul class="details-list animate-on-show"> <li><strong>AREA 1:</strong> 38 - 40 GB</li> <li><strong>AREA 2:</strong> 40 - 42 GB</li> <li><strong>AREA 3:</strong> 45 - 47 GB</li> <li><strong>AREA 4:</strong> 55 - 57 GB</li> </ul> <h4 class="animate-on-show">➤‎ ‎NOTED:‎ ‎🗒️!!</h4> <ul class="noted-list animate-on-show"> <li>Rewards Tidak Masuk, Tunggu 1x24 Jam Baru Komplen.</li> <li>Official 100%, Resmi, Bergaransi.</li> <li>Masa Aktif Kuota Internet, 28Hari.</li> <li>CEK AREA: https://ln.run/FQLSo</li> </ul> <div class="akrab-price animate-on-show">Rp 63.000‎ ‎💰</div> </div> </div>
+                    <div class="slide"> <div class="akrab-product"> <h3>🚀‎ ‎ ‎AKRAB JUMBOV2‎ ‎ ‎🚀</h3></h3> <h4 class="animate-on-show">Details Kuota:‎ ‎ ‎🔍</h4> <ul class="details-list animate-on-show"> <li><strong>AREA 1:</strong> 50.5 - 52.5 GB</li> <li><strong>AREA 2:</strong> 52.5 - 54.5 GB</li> <li><strong>AREA 3:</strong> 57.5 - 59.5 GB</li> <li><strong>AREA 4:</strong> 67.5 - 69.5 GB</li> </ul> <h4 class="animate-on-show">➤‎ ‎NOTED:‎ ‎🗒️!!</h4> <ul class="noted-list animate-on-show"> <li>Rewards Tidak Masuk, Tunggu 1x24 Jam Baru Komplen.</li> <li>Official 100%, Resmi, Bergaransi.</li> <li>Masa Aktif Kuota Internet, 28Hari.</li> <li>CEK AREA: https://ln.run/FQLSo</li> </ul> <div class="akrab-price animate-on-show">Rp 75.000‎ ‎💰</div> </div> </div>
+                    <div class="slide"> <div class="akrab-product"> <h3>📦‎ ‎ ‎AKRAB JUMBOV1‎ ‎ ‎📦</h3></h3> <h4 class="animate-on-show">Details Kuota:‎ ‎ ‎🔍</h4> <ul class="details-list animate-on-show"> <li><strong>AREA 1:</strong> 65 GB</li> <li><strong>AREA 2:</strong> 70 GB</li> <li><strong>AREA 3:</strong> 83 GB</li> <li><strong>AREA 4:</strong> 123 GB</li> </ul> <h4 class="animate-on-show">➤‎ ‎NOTED:‎ ‎🗒️!!</h4> <ul class="noted-list animate-on-show"> <li>Rewards Tidak Masuk, Tunggu 1x24 Jam Baru Komplen.</li> <li>Official 100%, Resmi, Bergaransi.</li> <li>Masa Aktif Kuota Internet, 28Hari.</li> <li>CEK AREA: https://ln.run/FQLSo</li> </ul> <div class="akrab-price animate-on-show">Rp 86.000‎ ‎💰</div> </div> </div>
+                    <div class="slide"> <div class="akrab-product"> <h3>🌍‎ ‎ ‎AKRAB MEGABIG‎ ‎ ‎🌍</h3> <h4 class="animate-on-show">Details Kuota:‎ ‎ ‎🔍</h4> <ul class="details-list animate-on-show"> <li><strong>AREA 1:</strong> 88 - 90 GB</li> <li><strong>AREA 2:</strong> 90 - 92 GB</li> <li><strong>AREA 3:</strong> 95 - 97 GB</li> <li><strong>AREA 4:</strong> 105 - 107 GB</li> </ul> <h4 class="animate-on-show">➤‎ ‎NOTED:‎ ‎🗒️!!</h4> <ul class="noted-list animate-on-show"> <li>Rewards Tidak Masuk, Tunggu 1x24 Jam Baru Komplen.</li> <li>Official 100%, Resmi, Bergaransi.</li> <li>Masa Aktif Kuota Internet, 28Hari.</li> <li>CEK AREA: https://ln.run/FQLSo</li> </ul> <div class="akrab-price animate-on-show">Rp 100.000‎ ‎💰</div> </div> </div>
+                </div>
+                <div class="slider-dots"></div>
+                <div class="slider-nav"> <button class="prev-btn">Prev</button> <button class="next-btn">Next</button> </div>
+            </div>
+        </section>
+
+        <section class="section scroll-animate">
+            <div class="section-header-wrapper">
+                <h2>🇸🇬‎ ‎ ‎𝗦𝗚 𝗩𝗣𝗡 𝗣𝗥𝗘𝗠 𝗠𝗔𝗫 𝟮𝗜𝗣</h2>
+            </div>
+            <div class="slider-container">
+                <div class="slides-wrapper">
+                    <div class="slide"><div class="grid-item"><h3>💸‎ ‎ ‎𝗛𝗔𝗥𝗚𝗔 𝗔𝗞𝗨𝗡‎ ‎ ‎👥</h3><ul class="product-list"><li class="product-item">🌸‎ ‎SGDO-1 ( PONSEL )‎ ‎🇸🇬‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 10k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎SGDO-2 ( SUP STB )‎ ‎🇸🇬‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 15k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎SG•MELBI-1 ( PONSEL )‎ ‎🇸🇬‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 13k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎SG•MELBI-2 ( SUP STB )‎ ‎🇸🇬‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 24k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎KHUSUS ( SUPORT STB )‎ ‎🇸🇬‎ ‎ ‎ ‎➤<span class="price">‎ ‎MAXS IP 5 DEVICE‎ ‎📡</span></li><li class="product-item">🌸‎ ‎HARGA DI X2 JIKA INGIN REQUEST MASA AKTIF SAMPAI‎ ‎ ‎ ‎➤<span class="price">‎ ‎1Bulan - 6Bulan‎ ‎🇸🇬</span></li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>📡‎ ‎ ‎𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗣𝗥𝗢𝗧𝗢𝗞𝗢𝗟</h3><ul class="multi-column-list"><li>• 🔐‎ ‎SSH & OpenVpn</li><li>• 🌐‎ ‎SSH WebSocket</li><li>• 📶‎ ‎SSH UDP</li><li>• 🌀‎ ‎VMess</li><li>• 💠‎ ‎VLess</li><li>• 🐴‎ ‎TRojan</li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>✨‎ ‎ ‎𝗞𝗘𝗟𝗘𝗕𝗜𝗛𝗔𝗡 𝗩𝗣𝗡 𝗣𝗥𝗘𝗠</h3><ul class="multi-column-list"><li>• 🔁‎ ‎Bisa<b>‎ ‎Trial</b></li><li>• 🚫‎ ‎Server<b>‎ ‎Jarang Error</b></li><li>• 🎙‎ ‎Support<b>‎ ‎Vc / Telpon</b></li><li>• 🎮‎ ‎Support<b>‎ ‎Game Online</b></li><li>• ⚡‎ ‎Speed<b>‎ ‎Stabil & Kencang</b></li><li>• 📝‎ ‎Bisa<b>‎ ‎Request Config</b></li><li>• 🛡<b>‎ ‎Amanah & Terpercaya</b></li><li>• ✅<b>‎ ‎Full Garansi</b></li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>🚫‎ ‎ ‎𝗣𝗘𝗥𝗔𝗧𝗨𝗥𝗔𝗡 𝗣𝗘𝗡𝗚𝗚𝗨𝗡𝗔</h3><div class="warning-box">❗‎ ‎<b>MELANGGAR‎ ‎=‎ ‎BANNED !!</b></div><ul class="multi-column-list"><li>• 🔞‎ ‎Dilarang ! <b>Akses vid* dewasa</b></li><li>• 🎰‎ ‎Dilarang ! <b>Akses judi online</b></li><li>• 💻‎ ‎Dilarang ! <b>Cyber crime</b></li><li>• 💳‎ ‎Dilarang ! <b>Carding</b></li><li>• 🛠‎ ‎Dilarang ! <b>Hacking</b>‎ ‎&‎ ‎<b>DDoS</b></li><li>• ⚠️‎ ‎<b>ALL aktivitas ilegal dilarang!</b></li></ul></div></div>
+                </div>
+                <div class="slider-dots"></div>
+                <div class="slider-nav"> <button class="prev-btn">Prev</button> <button class="next-btn">Next</button> </div>
+            </div>
+        </section>
+
+        <section class="section scroll-animate">
+            <div class="section-header-wrapper">
+                <h2>🇮🇩‎ ‎ ‎𝗜𝗗 𝗩𝗣𝗡 𝗣𝗥𝗘𝗠 𝗠𝗔𝗫 𝟮𝗜𝗣</h2>
+            </div>
+            <div class="slider-container">
+                <div class="slides-wrapper">
+                    <div class="slide"><div class="grid-item"><h3>💸‎ ‎ ‎𝗛𝗔𝗥𝗚𝗔 𝗔𝗞𝗨𝗡‎ ‎ ‎👥</h3><ul class="product-list"><li class="product-item">🌸‎ ‎ID•NUSA-1 ( PONSEL )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 13k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•NUSA-2 ( SUP STB )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 23k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•LINODE ( PONSEL )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 12k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎IKD•VIP-1 ( PONSEL )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 15k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎IKD•VIP-2 ( SUP STB )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 25k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•BIZNET-1 ( PONSEL )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 11k 30H‎ ‎💰</span></span></li><li class="product-item">🌸‎ ‎ID•BIZNET-2 ( SUP STB )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 15k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•WIJAYA-1 ( PONSEL )‎ ‎🇮🇩‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 11k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•WIJAYA-2 ( SUP STB )‎ ‎🇮🇩‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 15k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎ID•NEVA ( UDP ONLY )‎ ‎🇮🇩‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎╰➤<span class="price">‎ ‎Rp. 14k 30H‎ ‎💰</span></li><li class="product-item">🌸‎ ‎KHUSUS ( SUPORT STB )‎ ‎🇮🇩‎ ‎ ‎ ‎➤<span class="price">‎ ‎MAXS IP 5 DEVICE‎ ‎📡</span></li><li class="product-item">🌸‎ ‎HARGA DI X2 JIKA INGIN REQUEST MASA AKTIF SAMPAI‎ ‎ ‎ ‎➤<span class="price">‎ ‎1Bulan - 6Bulan‎ ‎🇮🇩</span></li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>📡‎ ‎ ‎𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗣𝗥𝗢𝗧𝗢𝗞𝗢𝗟</h3><ul class="multi-column-list"><li>• 🔐‎ ‎SSH & OpenVpn</li><li>• 🌐‎ ‎SSH WebSocket</li><li>• 📶‎ ‎SSH UDP</li><li>• 🌀‎ ‎VMess</li><li>• 💠‎ ‎VLess</li><li>• 🐴‎ ‎TRojan</li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>✨‎ ‎ ‎𝗞𝗘𝗟𝗘𝗕𝗜𝗛𝗔𝗡 𝗩𝗣𝗡 𝗣𝗥𝗘𝗠</h3><ul class="multi-column-list"><li>• 🔁‎ ‎Bisa<b>‎ ‎Trial</b></li><li>• 🚫‎ ‎Server<b>‎ ‎Jarang Error</b></li><li>• 🎙‎ ‎Support<b>‎ ‎Vc / Telpon</b></li><li>• 🎮‎ ‎Support<b>‎ ‎Game Online</b></li><li>• ⚡‎ ‎Speed<b>‎ ‎Stabil & Kencang</b></li><li>• 📝‎ ‎Bisa<b>‎ ‎Request Config</b></li><li>• 🛡<b>‎ ‎Amanah & Terpercaya</b></li><li>• ✅<b>‎ ‎Full Garansi</b></li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>🚫‎ ‎ ‎𝗣𝗘𝗥𝗔𝗧𝗨𝗥𝗔𝗡 𝗣𝗘𝗡𝗚𝗚𝗨𝗡𝗔</h3><div class="warning-box">❗‎ ‎<b>MELANGGAR‎ ‎=‎ ‎BANNED !!</b></div><ul class="multi-column-list"><li>• 🔞‎ ‎Dilarang ! <b>Akses vid* dewasa</b></li><li>• 🎰‎ ‎Dilarang ! <b>Akses judi online</b></li><li>• 💻‎ ‎Dilarang ! <b>Cyber crime</b></li><li>• 💳‎ ‎Dilarang ! <b>Carding</b></li><li>• 🛠‎ ‎Dilarang ! <b>Hacking</b>‎ ‎&‎ ‎<b>DDoS</b></li><li>• ⚠️‎ ‎<b>ALL aktivitas ilegal dilarang!</b></li></ul></div></div>
+                </div>
+                <div class="slider-dots"></div>
+                <div class="slider-nav"> <button class="prev-btn">Prev</button> <button class="next-btn">Next</button> </div>
+            </div>
+        </section>
+        
+        <section class="section scroll-animate">
+            <div class="section-header-wrapper">
+                <h2 class="long-title"><span>🌊‎ ‎ ‎𝗩𝗣𝗦 / 𝗥𝗗𝗣 𝗣𝗔𝗖𝗞𝗔𝗚𝗘 𝗠𝗔𝗗𝗘 𝗗𝗜𝗚𝗜𝗧𝗔𝗟 𝗢𝗖𝗘𝗔𝗡‎ ‎ ‎🦭</span></h2>
+            </div>
+            <div class="slider-container">
+                <div class="slides-wrapper">
+                    <div class="slide"><div class="grid-item"><h3>🖥‎ ‎ ‎𝗣𝗔𝗞𝗘𝗧 𝟭 — 𝗩𝗣𝗦 / 𝗥𝗗𝗣</h3><ul class="product-list"><li class="product-item">▸‎ ‎<b>4GB|C2|5TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 25k‎ ‎💰</span></li><li class="product-item">▸‎ ‎<b>8GB|C4|5TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 30k‎ ‎💰</span></li><li class="product-item">▸‎ ‎<b>16GB|C4|8TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 35k‎ ‎💰</span></li></ul><h4 class="animate-on-show">ℹ️‎ ‎ ‎Informasi Paket 1</h4><ul><li>Garansi: 10 Hari</li><li>Os System: Bebas Req</li><li>Klaim Garansi: Maks. 1x</li><li>Full Support: \24jm</li><li>Warrtnya Pr: 28-30 actf</li></ul></div></div>
+                    <div class="slide"><div class="grid-item"><h3>🖥‎ ‎ ‎𝗣𝗔𝗞𝗘𝗧 𝟮 — 𝗩𝗣𝗦 / 𝗥𝗗𝗣</h3><ul class="product-list"><li class="product-item">▸‎ ‎<b>4GB|C2|5TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 35k‎ ‎💰</span></li><li class="product-item">▸‎ ‎<b>8GB|C4|5TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 40k‎ ‎💰</span></li><li class="product-item">▸‎ ‎<b>16GB|C4|8TB</b>‎ ‎|‎ ‎<span class="price">‎ ‎Rp. 45k‎ ‎💰</span></li></ul><h4 class="animate-on-show">ℹ️‎ ‎ ‎Informasi Paket 2</h4><ul><li>Garansi: 15 Hari</li><li>Os System: Bebas Req</li><li>Klaim Garansi: Maks. 1x</li><li>Full Support: \24jm</li><li>Warrtnya Pr: 28-30 actf</li></ul></div></div>
+                </div>
+                <div class="slider-dots"></div>
+                <div class="slider-nav"> <button class="prev-btn">Prev</button> <button class="next-btn">Next</button> </div>
+            </div>
+        </section>
+
+        <section class="section contact-section scroll-animate">
+            <div class="section-header-wrapper">
+                <h2>富‎ ‎ ‎𝙊𝙍𝘿𝙀𝙍 & 𝘾𝙊𝙉𝙏𝘼𝘾𝙏‎ ‎ ‎富</h2>
+            </div>
+            <div class="btn-group">
+                <a href="https://wa.me/6285789633918" target="_blank" class="btn">📱‎ ‎WhatsApp</a>
+                <a href="https://t.me/Arilz11Ofc" target="_blank" class="btn">💬‎ ‎Telegram</a>
+                <a href="https://chat.whatsapp.com/ImPnseQV9HO0Xm1DQ3KXjo?mode=ac_t" target="_blank" class="btn">👥‎ ‎Join Group Kami</a>
+                <a href="https://whatsapp.com/channel/0029Vb1gtyA05MUeAFFrrk0X" target="_blank" class="btn">📢‎ ‎Channel Resmi</a>
+            </div>
+        </section>
+        
+        <footer class="footer scroll-animate">
+            <p>&copy; 2025 Z11 Markect. All Rights Reserved.</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const body = document.body;
+            const preloader = document.getElementById('preloader');
+            const welcomeText = document.querySelector('.welcome-text');
+
+            // --- HD PRELOAD: Mencegah animasi lain berjalan sebelum intro selesai ---
+            body.classList.add('preloader-active');
+            body.classList.add('animations-paused');
+
+            const text = welcomeText.textContent;
+            const letterAnimationDelay = 150;
+            const letterAnimationDuration = 1000;
+            const flashAnimationDuration = 800;
+            
+            welcomeText.textContent = '';
+            text.split('').forEach((char, i) => {
+                const charSpan = document.createElement('span');
+                charSpan.textContent = char;
+                charSpan.style.animationDelay = `${i * letterAnimationDelay}ms`;
+                welcomeText.appendChild(charSpan);
+            });
+            
+            // --- HD TIMING: Penyesuaian timing agar efek flash muncul di puncak animasi ---
+            const totalLetterAnimationTime = (text.length - 1) * letterAnimationDelay + letterAnimationDuration;
+            const flashStartTime = totalLetterAnimationTime - 400;
+
+            welcomeText.style.setProperty('--flash-delay', `${flashStartTime}ms`);
+            welcomeText.classList.add('flash-effect');
+            
+            const totalIntroDuration = flashStartTime + flashAnimationDuration;
+
+            setTimeout(() => {
+                if(preloader) {
+                    preloader.classList.add('fade-out');
+                    body.classList.remove('preloader-active');
+                    
+                    preloader.addEventListener('transitionend', () => {
+                        preloader.remove();
+                        // --- HD LOAD: Memulai animasi halaman setelah preloader hilang sepenuhnya ---
+                        body.classList.remove('animations-paused');
+                        initializePageAnimations();
+                        document.querySelector('.container').classList.add('is-visible');
+                    }, { once: true });
+                }
+            }, totalIntroDuration + 100);
+
+
+            function initializePageAnimations() {
+                // --- SCRIPT ANIMASI MENGETIK ---
+                function typeWriter(element, text, speed, callback) {
+                    let i = 0;
+                    element.innerHTML = '';
+                    element.classList.add('typing-cursor'); 
+                    function type() {
+                        if (i < text.length) {
+                            element.innerHTML += text.charAt(i);
+                            i++;
+                            setTimeout(type, speed);
+                        } else {
+                            element.classList.remove('typing-cursor');
+                            if (callback) callback();
+                        }
+                    }
+                    type();
+                }
+                const line1 = document.getElementById('typing-line-1');
+                const line2 = document.getElementById('typing-line-2');
+                const text1 = line1.innerText;
+                const text2 = line2.innerText;
+                line1.innerText = ''; 
+                line2.innerText = '';
+
+                setTimeout(() => {
+                    typeWriter(line1, text1, 75, () => { 
+                        typeWriter(line2, text2, 50); 
+                    });
+                }, 500);
+
+                // --- SCRIPT SLIDER & INDIKATOR DOTS ---
+                const sliders = document.querySelectorAll('.slider-container');
+                sliders.forEach(slider => {
+                    const slidesWrapper = slider.querySelector('.slides-wrapper');
+                    const slides = Array.from(slider.querySelectorAll('.slide'));
+                    const prevBtn = slider.querySelector('.prev-btn');
+                    const nextBtn = slider.querySelector('.next-btn');
+                    const dotsContainer = slider.querySelector('.slider-dots');
+                    let currentIndex = 0;
+                    const totalSlides = slides.length;
+
+                    if (dotsContainer) {
+                        slides.forEach((_, i) => {
+                            const dot = document.createElement('button');
+                            dot.classList.add('dot');
+                            dot.addEventListener('click', () => { currentIndex = i; updateSlider(); });
+                            dotsContainer.appendChild(dot);
+                        });
+                    }
+                    const dots = dotsContainer ? Array.from(dotsContainer.children) : [];
+
+                    // --- HD SLIDE ANIMATION: Memicu animasi elemen di dalam slide aktif ---
+                    function triggerSlideAnimations(slideIndex) {
+                        slides.forEach((slide, index) => {
+                            const elementsToAnimate = slide.querySelectorAll('.animate-on-show');
+                            const listItems = slide.querySelectorAll('.grid-item ul:not(.product-list) li');
+
+                            if (index === slideIndex) {
+                                slide.classList.add('active-slide');
+                                
+                                elementsToAnimate.forEach(el => {
+                                    el.classList.remove('activated');
+                                    void el.offsetWidth;
+                                    el.classList.add('activated');
+                                });
+
+                                // --- HD LIST REVEAL: Item list muncul satu per satu ---
+                                listItems.forEach((li, itemIndex) => {
+                                    li.classList.remove('activated');
+                                    setTimeout(() => {
+                                        li.classList.add('activated');
+                                    }, 80 * (itemIndex + 1));
+                                });
+                            } else {
+                                slide.classList.remove('active-slide');
+                                elementsToAnimate.forEach(el => el.classList.remove('activated'));
+                                listItems.forEach(li => li.classList.remove('activated'));
+                            }
+                        });
+                    }
+
+                    function updateSlider() {
+                        slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        if (prevBtn && nextBtn) {
+                            prevBtn.disabled = currentIndex === 0;
+                            nextBtn.disabled = currentIndex === totalSlides - 1;
+                        }
+                        if (dots.length > 0) {
+                            dots.forEach(dot => dot.classList.remove('active'));
+                            dots[currentIndex].classList.add('active');
+                        }
+                        triggerSlideAnimations(currentIndex); 
+                    }
+
+                    if (nextBtn) { nextBtn.addEventListener('click', () => { if (currentIndex < totalSlides - 1) { currentIndex++; updateSlider(); } }); }
+                    if (prevBtn) { prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; updateSlider(); } }); }
+                    
+                    updateSlider();
+                });
+
+                // --- SCRIPT SCROLL OBSERVER (ANIMASI SAAT SCROLL) ---
+                const scrollObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { root: null, rootMargin: '0px', threshold: 0.1 });
+                
+                document.querySelectorAll('.section, .footer').forEach(el => { scrollObserver.observe(el); });
+
+                // --- SCRIPT EFEK TILT 3D PADA KARTU ---
+                const tiltElements = document.querySelectorAll('.product-item, .akrab-product');
+                tiltElements.forEach(el => {
+                    el.addEventListener('mousemove', (e) => {
+                        const { left, top, width, height } = el.getBoundingClientRect();
+                        const rotateX = (e.clientY - top - height / 2) * 0.03;
+                        const rotateY = -(e.clientX - left - width / 2) * 0.03;
+                        el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                    });
+                });
+                
+                // --- SCRIPT SPOTLIGHT KURSOR (PERFORMANCE OPTIMIZED) ---
+                const spotlightBody = document.body;
+                if (window.innerWidth > 768) {
+                    window.addEventListener('mousemove', (e) => {
+                        // --- HD PERFORMANCE: Menggunakan requestAnimationFrame untuk update yang lebih mulus ---
+                        requestAnimationFrame(() => {
+                            spotlightBody.style.setProperty('--spotlight-x', `${e.clientX}px`);
+                            spotlightBody.style.setProperty('--spotlight-y', `${e.clientY}px`);
+                        });
+                    });
+                }
+
+                // --- SCRIPT SCROLL PROGRESS INDICATOR ---
+                const scrollProgress = document.getElementById('scroll-progress');
+                window.addEventListener('scroll', () => {
+                    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrolled = (window.scrollY / totalHeight) * 100;
+                    scrollProgress.style.width = scrolled + '%';
+                });
+
+                // --- SCRIPT STICKY HEADER BLUR ---
+                const header = document.querySelector('.header');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 50) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+
+                // --- SCRIPT UNTUK MARQUEE YANG DIJAMIN MULUS ---
+                const longTitles = document.querySelectorAll('.long-title span');
+                longTitles.forEach(span => {
+                    const originalContentHTML = span.innerHTML;
+                    // Duplikasi konten untuk menciptakan efek loop yang tak terputus
+                    span.innerHTML = `
+                        <div class="marquee__inner">
+                            <div class="marquee__content">${originalContentHTML}</div>
+                            <div class="marquee__content">${originalContentHTML}</div>
+                        </div>
+                    `;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
